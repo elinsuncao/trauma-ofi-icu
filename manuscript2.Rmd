@@ -1,6 +1,6 @@
 ---
 title: "Opportunities for improvement in adult trauma patients admitted to the intensive care unit: A registry-based study"
-output: "html_document"
+output: "word_document"
 author: "Elin Sun Cao"
 bibliography: bibliography.bib
 csl: vancouver.csl
@@ -11,10 +11,7 @@ editor_options:
 
 ## Opportunities for improvement in adult trauma patients admitted to the intensive care unit: A registry-based study
 ### Background
-Trauma is a leading cause of morbidity and mortality worldwide. A cornerstone in trauma quality improvement programs is multidisciplinary morbidity and mortality conferences. The purpose of these conferences is to identify opportunities for improvement (OFI). Many patients with severe trauma are admitted to the intensive care unit (ICU), but little is known about OFI in this group of patients. 
-
-### Aim
-Characterize OFI in adult trauma patients admitted to the ICU and assess how patient and process factors are associated with OFI in these patients. 
+Trauma is a leading cause of morbidity and mortality worldwide. A cornerstone in trauma quality improvement programs is multidisciplinary morbidity and mortality conferences. The purpose of these conferences is to identify opportunities for improvement (OFI). Many patients with severe trauma are admitted to the intensive care unit (ICU), but little is known about OFI in this group of patients. The aim of this study was to characterize OFI in adult trauma patients admitted to the ICU and assess how patient and process factors are associated with OFI in these patients. 
 
 ### Methods
 A registry-based study of trauma patients admitted to the ICU between 2014-2023 at the Karolinska University Hospital in Solna, Sweden, who were reviewed regarding the presence of OFI in a morbidity and mortality conference. Bivariable and multivariable logistic regression was used to determine associations between selected patient and process factors and OFI. 
@@ -151,6 +148,9 @@ table3alive_merge
 Table 3 shows the unadjusted and adjusted associations of OFI and the selected patient and process factors among the patients who were alive 30 days after injury. In the unadjusted analysis > 7 days in the ICU was significantly associated with OFI. In the adjusted analysis increased RTS-score was significantly associated with increased odds of OFI.
 
 # Discussion
+
+The key results from this study are that higher RTS, > 7 days length of stay in the ICU and survival 30 days after injury were significantly associated with higher odds of OFI. Age, sex, mechanical ventilation, ISS, time to first CT, arrival during on-call hours, and ASA preinjury were not significantly associated with OFI in either the adjusted or the unadjusted analyses. In the subgroup analysis of patients who were alive 30 days after injury, no patient or process factor was significantly associated with OFI in the adjusted analysis.
+
 We found that higher RTS was associated with increased odds of OFI. Previous research has shown that patients with relatively better vital parameter values, had a significant association with increased odds of OFI in the unadjusted analysis, but not in the adjusted analysis [@12]. These findings could be because patients with lower RTS are often in critical condition upon arrival — upon which emergency interventions are performed immediately. Conversely, patients with higher RTS, indicating relative stability in this patient group upon arrival, may experience delayed interventions.  
 
 Similarly, prolonged ICU stay was found to be significantly associated with OFI. There are two things to consider regarding this variable. Firstly, patients requiring extended ICU care are often those with complex medical conditions, severe injuries, or critical illness. As a result, their prolonged stay in the ICU may signify a higher baseline risk for experiencing complications, increasing odds of OFI. Additionally, prolonged ICU stay increases likelihood of medical errors and adverse events to occur. The ICU environment, while designed to provide advanced medical care, can also be fraught with complexities, including high patient acuity, numerous interventions, and a fast-paced workflow. The longer a patient remains in the ICU, the greater the cumulative exposure to potential errors. Conversely, shorter ICU stays may indicate patient demise before potential mistakes could occur, particularly in cases where mortality was anticipated rather than preventable. This finding is similar to previous research demonstrating prolonged ICU stays as a risk factor for increased morbidity and mortality in trauma patients [@22, @26]. Furthermore, it also corresponds with a retrospective cohort indicating that lower initial illness severity and younger age are associated with earlier discharge, further supporting the link between higher odds of OFI and prolonged ICU stays [@25]. 
