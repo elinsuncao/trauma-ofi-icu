@@ -55,15 +55,18 @@ excluded1 <- moveBox(excluded1,
                      x = 0.8,
                      y = 0.4)
 
+#Defining small arrow
+small_arrow <- arrow(length = unit(0.1, "inches"), type = "closed")
+
 # Connect boxes vertically
 for (i in 1:(length(vert) - 1)) {
-  connectGrob(vert[[i]], vert[[i + 1]], type = "vert") %>%
+  connectGrob(vert[[i]], vert[[i + 1]], type = "vert", arrow = small_arrow) %>%
     print
 }
 
 # Connect excluded box horizontally
-connectGrob(vert$eligible, excluded, type = "L")
-connectGrob(vert$included, excluded1, type = "L")
+connectGrob(vert$eligible, excluded, type = "L", arrow = small_arrow)
+connectGrob(vert$included, excluded1, type = "L", arrow = small_arrow)
 
 # Print boxes
 vert

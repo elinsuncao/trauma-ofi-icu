@@ -26,7 +26,8 @@ table3a <- tbl_uvregression(data = tablereg,
                               TimeFCT = "Time to first CT"
                             )) %>%
   bold_labels() %>%
-  bold_p(t = 0.05) 
+  bold_p(t = 0.05) %>%
+  hide_n = TRUE
 
 #print(table3a)
 
@@ -43,14 +44,16 @@ table3b <- tbl_regression(adjusted_table,
                                        ASApreinjury = "ASA preinjury",
                                        TimeFCT = "Time to first CT")) %>%
   bold_labels() %>%
-  bold_p(t = 0.05)
+  bold_p(t = 0.05) %>%
+  hide_n = TRUE
 
 # print(table3b)
 
 # Merging Tables
 table3_merge <- tbl_merge(tbls = list(table3a, table3b),
                           tab_spanner = c("**Unadjusted**", "**Adjusted**")) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 2. Unadjusted and adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement</div>")
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 2. Unadjusted and adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement (N = 1200).</div>")
+
 
 print(table3_merge)
 

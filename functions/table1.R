@@ -210,8 +210,8 @@ table2 <- table1 %>%
   ) %>%
   bold_labels() %>% 
   add_overall(last = TRUE) %>% 
-  add_p() %>%
-  bold_p(t=0.05) %>%
+  #add_p() %>%
+  #bold_p(t=0.05) %>%
   modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 1. Sample Characteristics</div>") %>% 
  # as_flex_table() %>%
   print()
