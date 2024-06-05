@@ -6,7 +6,7 @@ tablereg <- ofi %>%
 tablereg <- na.omit(tablereg)
 
 tablereg$Intubation <- ifelse(is.na(tablereg$Intubation), "Unknown", table1$Intubation)
-tablereg$Intubation <- fct_relevel(tablereg$Intubation, "No intubation", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown")
+tablereg$Intubation <- fct_relevel(tablereg$Intubation, "Not intubated", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown")
 tablereg$daysinICU <- fct_relevel(tablereg$daysinICU, "≤ 7 days", "> 7 days")
 tablereg$Survival <- fct_relevel(tablereg$Survival, "Dead", "Alive")
 
@@ -26,8 +26,7 @@ table3a <- tbl_uvregression(data = tablereg,
                               TimeFCT = "Time to first CT"
                             )) %>%
   bold_labels() %>%
-  bold_p(t = 0.05) %>%
-  hide_n = TRUE
+  bold_p(t = 0.05)
 
 #print(table3a)
 
@@ -44,15 +43,15 @@ table3b <- tbl_regression(adjusted_table,
                                        ASApreinjury = "ASA preinjury",
                                        TimeFCT = "Time to first CT")) %>%
   bold_labels() %>%
-  bold_p(t = 0.05) %>%
-  hide_n = TRUE
+  bold_p(t = 0.05)
 
 # print(table3b)
 
 # Merging Tables
 table3_merge <- tbl_merge(tbls = list(table3a, table3b),
                           tab_spanner = c("**Unadjusted**", "**Adjusted**")) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 2. Unadjusted and adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement (N = 1200).</div>")
+ # modify_column_merge(pattern = "{OR} ({ci}) {p.value}") %>%
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 3. Unadjusted and adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement (N = 1200).</div>")
 
 
 print(table3_merge)

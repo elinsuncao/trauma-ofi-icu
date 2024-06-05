@@ -72,3 +72,4 @@ connectGrob(vert$included, excluded1, type = "L", arrow = small_arrow)
 vert
 excluded
 excluded1
+

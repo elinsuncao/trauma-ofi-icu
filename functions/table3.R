@@ -31,7 +31,7 @@ tablereg1$daysinICU <- fct_relevel(tablereg1$daysinICU, "≤ 7 days", "> 7 days"
 #Creating linear regression 
 adjusted_table1 <- glm(OpportunityForImprovement1 ~ Sex + Age + Intubation + RTS +  ISS + OnDuty + daysinICU + TimeFCT + ASApreinjury, family = binomial, data = tablereg1) 
 
-table3alive <- tbl_regression(adjusted_table1,
+table3aalive <- tbl_regression(adjusted_table1,
                           exponentiate = TRUE, 
                           label = list(RTS = "Revised Trauma Score",
                                        daysinICU = "Days in the ICU",
@@ -40,8 +40,7 @@ table3alive <- tbl_regression(adjusted_table1,
                                        ASApreinjury = "ASA preinjury",
                                        TimeFCT = "Time to first CT")) %>%
   bold_labels() %>%
-  bold_p(t = 0.05) %>%
-  hide_n = TRUE
+  bold_p(t = 0.05)
 
 #Creating with patients who died
 ofi_dead <- subset(tablereg, subset = (Survival == "Dead"))
@@ -54,7 +53,7 @@ tablereg2$daysinICU <- fct_relevel(tablereg2$daysinICU, "≤ 7 days", "> 7 days"
 
 adjusted_table2 <- glm(OpportunityForImprovement1 ~ Sex + Age + Intubation + RTS +  ISS + OnDuty + daysinICU + TimeFCT + ASApreinjury, family = binomial, data = tablereg2) 
 
-table3dead <- tbl_regression(adjusted_table2,
+table3bdead <- tbl_regression(adjusted_table2,
                                exponentiate = TRUE, 
                                label = list(RTS = "Revised Trauma Score",
                                             daysinICU = "Days in the ICU",
@@ -63,14 +62,14 @@ table3dead <- tbl_regression(adjusted_table2,
                                             ASApreinjury = "ASA preinjury",
                                             TimeFCT = "Time to first CT")) %>%
   bold_labels() %>%
-  bold_p(t = 0.05) %>%
-  hide_n = TRUE
+  bold_p(t = 0.05)
 
 # Merging Tables
-table3_merge <- tbl_merge(tbls = list(table3alive, table3dead),
+table3b_merge <- tbl_merge(tbls = list(table3aalive, table3bdead),
                           tab_spanner = c("**Alive**", "**Dead**")) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 3. Adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement in patients alive and dead 30 days after hospitalization (N = 953).</div>")
+ # modify_table_styling(table3b_merge, hide_n = TRUE) %>%
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 4. Adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement in patients alive and dead 30 days after hospitalization (N = 953).</div>")
 
 # Print the merged table
-print(table3_merge)
+print(table3b_merge) 
 

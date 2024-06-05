@@ -62,14 +62,14 @@ ofi$Age <- ofi$pt_age_yrs
 
 #Intubation 
 ofi$Intubation1 <- ifelse(ofi$pre_intubated == 1, "Intubation",
-                          ifelse(ofi$pre_intubated == 2, "No intubation",  
+                          ifelse(ofi$pre_intubated == 2, "Not intubated",  
                                  ifelse(ofi$pre_intubated == 999, "Unknown",
                                         ifelse(ofi$ed_intubated == 1, "Intubation",
-                                               ifelse(ofi$ed_intubated == 2, "No intubation",  
+                                               ifelse(ofi$ed_intubated == 2, "Not intubated",  
                                                       ifelse(ofi$ed_intubated == 999, "Unknown", "Unknown"))))))
 
 #Intubation combined with ventilator days 
-ofi$Intubation <- ifelse(ofi$Intubation1 == "No intubation", "No intubation",
+ofi$Intubation <- ifelse(ofi$Intubation1 == "Not intubated", "Not intubated",
                          ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days ==  0, "Mechnical ventilation 1-7 days",
                                 ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 1:7, "Mechanical ventilation 1-7 days",
                                        ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days", 
@@ -185,7 +185,7 @@ table1$Intubation <- ifelse(is.na(table1$Intubation), "Unknown", table1$Intubati
 table1 <- na.omit(table1)
 
 table2 <- table1 %>%
-  mutate(Intubation = factor(Intubation, levels = c("No intubation", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
+  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
   tbl_summary(by = OpportunityForImprovement,
               type = list(OnDuty ~ "dichotomous"),
               label = list(RTS = "Revised Trauma Score",
@@ -212,6 +212,6 @@ table2 <- table1 %>%
   add_overall(last = TRUE) %>% 
   #add_p() %>%
   #bold_p(t=0.05) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 1. Sample Characteristics</div>") %>% 
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 2. Sample Characteristics</div>") %>% 
  # as_flex_table() %>%
   print()
