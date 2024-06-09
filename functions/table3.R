@@ -40,6 +40,7 @@ table3aalive <- tbl_regression(adjusted_table1,
                                        ASApreinjury = "ASA preinjury",
                                        TimeFCT = "Time to first CT")) %>%
   bold_labels() %>%
+  add_n() %>%
   bold_p(t = 0.05)
 
 #Creating with patients who died
@@ -68,7 +69,7 @@ table3bdead <- tbl_regression(adjusted_table2,
 table3b_merge <- tbl_merge(tbls = list(table3aalive, table3bdead),
                           tab_spanner = c("**Alive**", "**Dead**")) %>%
  # modify_table_styling(table3b_merge, hide_n = TRUE) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 4. Adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement in patients alive and dead 30 days after hospitalization (N = 953).</div>")
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 4. Adjusted logistic regression analyses of associations between patient level factors and opportunities for improvement in patients alive and dead 30 days after hospitalization (N = 1163).</div>")
 
 # Print the merged table
 print(table3b_merge) 
