@@ -9,7 +9,6 @@ editor_options:
     wrap: 72
 ---
 
-
 ## Opportunities for improvement in adult trauma patients admitted to the intensive care unit: A registry-based cohort study
 ## Abstract
 ### Background
@@ -27,9 +26,7 @@ Several patient and process factors were found to be associated with opportuniti
 # Introduction
 Trauma — the clinical entity of external injury and the body’s associated response — is a leading cause of mortality and morbidity worldwide [@60; @6]. Patients with major trauma often require intensive care unit (ICU) admission, where managing these patients can be challenging and result in complications or death [@64; @69]. Although these complications are often expected, the complexity of ICU care makes the setting prone to mistakes and errors. 
 
-Peer review is a cornerstone of trauma quality improvement programs aimed at identifying preventable causes of mortality and morbidity in trauma patients [@70], referred to as opportunities for improvement [@42]. Previous research on opportunities for improvement in trauma care has focused on the initial resuscitation phase and show that
-*detta ska redigeras*
-been compiled in a systematic review, which classified and identified areas for improvement such as inadequate monitoring, team communication, assessment of injury and procedure-related issues [@75].
+Peer review is a cornerstone of trauma quality improvement programs aimed at identifying preventable causes of mortality and morbidity in trauma patients [@70], referred to as opportunities for improvement [@42]. Previous research on opportunities for improvement in trauma care have been compiled into a systematic review, which classified and identified areas for improvement such as inadequate monitoring, team communication, assessment of injury and procedure-related issues [@75].
 
 In contrast, little is known about opportunities for improvement in the care of trauma patients in the ICU [@64; @12]. Assessing opportunities for improvement in these patients is challenging because it is difficult to establish the standard of care for each individual and despite optimal treatment, these patients are at risk for complications and death [@9].  This study aims to characterize opportunities for improvement in adult trauma patients admitted to the ICU and assess how patient and process factors are associated with opportunities for improvement in these patients.
 
@@ -37,7 +34,7 @@ In contrast, little is known about opportunities for improvement in the care of 
 
 ## Study design and data sources
 
-We conducted a retrospective single-center cohort study based on data from the Karolinska University Hospital trauma registry, and the hospital's local trauma care quality database. The trauma registry is part of the Swedish national trauma registry SweTrau [*källa*]. 
+We conducted a retrospective single-center cohort study based on data from the Karolinska University Hospital trauma registry, and the hospital's local trauma care quality database. The trauma registry is part of the Swedish national trauma registry SweTrau [@76]. 
 
 ## Setting
 
@@ -112,7 +109,7 @@ Table 1 present sample characteristics. Most patients were male 1,096 (76%) vs 3
 source("functions/ofi_categories.R")
 ```
 ```{r, echo=FALSE}
-table2
+table_ofic
 ```
 
 Table 2 illustrates opportunities for improvement divided into categories based on the definitions of opportunity for improvement types during mortality and morbidity reviews at the Karolinska University Hospital in Solna. 
@@ -137,7 +134,7 @@ source("functions/table3.R")
 table3b_merge
 ```
 
-Table 4 shows the results of the stratified analysis with adjusted associations between patient and process factors and opportunities for improvement among the patients who were alive and dead 30 days after injury respectively. The Revised Trauma Score was significantly associated with increased odds of OFI for both patients who were alive `r inline_text(table3aalive, variable = RTS)` and deceased `r inline_text(table3bdead, variable = RTS)` 30 days after injury.
+Table 4 shows the results of the stratified analysis with adjusted associations between patient and process factors and opportunities for improvement among the patients who were alive and dead 30 days after injury respectively. The Revised Trauma Score was significantly associated with increased odds of OFI for both patients who were alive `r inline_text(table3aalive, variable = RTS)` and deceased `r inline_text(table3bdead, variable = RTS)` 30 days after injury. Time to first computed tomography was significantly associated with opportunities for improvement in patients who were deceased 30 days after injury `r inline_text(table3bdead, variable = TimeFCT)`.
 
 # Discussion
 
@@ -157,16 +154,7 @@ However, several limitations need to be acknowledged in our study. This was a si
 
 # Conclusion
 
-The findings revealed a significant association between increased odds of opportunities for improvement and higher Revised Trauma Score, ICU length of stay exceeding 7 days, and survival 30 days after injury. The results highlight the importance of prioritizing these groups of patients for closer monitoring and implementing targeted interventions to prevent errors in care. Further research on opportunities for improvement among ICU-admitted patients is needed to expand our understanding of this aspect of trauma care. The primary limitation of this study was its restricted sample size, highlighting the need for larger-scale investigations. Conducting multi-center studies encompassing extensive databases or merging multiple datasets could provide more comprehensive insights into opportunities for improvement and contribute to enhancing Trauma Quality Improvement Programs on a broader scale. However, it is important to acknowledge that multi-center studies may compromise internal validity, reducing their applicability to specific centers. 
-
-Building upon the findings of this study, future research should focus on specific variables such as ICU length of stay and the individual assessment of vital parameters like Glasgow Coma Scale, respiratory rate, and systolic blood pressure, rather than relying solely on composite scores like Revised Trauma Score. Analyzing these vital signs separately may reveal which parameter holds greater predictive value for opportunities for improvement. Also, qualitative studies could provide an in-depth understanding of why physiologically more stable patients are more likely to have opportunities for improvement. 
-
-Given the significant association between higher Revised Trauma Score and increased odds of opportunities for improvement, attention should be directed towards trauma patients who appear stable upon admission but may deteriorate over time. Future research should aim to identify early indicators of worsening conditions in these patients, facilitating more targeted resource allocation and intervention strategies.
-
-In contrast, Injury Severity Score did not demonstrate a correlation with opportunities for improvement in this study. Subsequent studies could explore alternative scoring systems such as New Injury Severity Score, Revised Trauma Score, and ASA scores, or combinations of physiological and anatomical scoring systems to determine the most effective predictor of opportunities for improvement in trauma patients.
-
-Overall, future research endeavors should strive to address these gaps in knowledge to optimize trauma care outcomes and contribute to the ongoing improvement of trauma quality improvement initiatives. 
-
+The findings revealed a significant association between increased odds of opportunities for improvement and higher Revised Trauma Score, ICU length of stay longer than 7 days, and survival 30 days after injury, emphasizing the need for focused monitoring and targeted interventions for these patients. The results also suggest the importance of investigating specific variables like ICU length of stay and individual vital parameters, rather than composite scores such as Revised Trauma Score, to better predict opportunities for improvement. Future research should also explore early indicators of deterioration in seemingly stable trauma patients and evaluate alternative scoring systems to enhance predictive accuracy.
 
 
 # References
