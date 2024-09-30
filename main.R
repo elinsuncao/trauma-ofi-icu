@@ -215,7 +215,7 @@ ofi$daysinICU <- ifelse(ofi$iva_dagar_n < 7 | ofi$iva_dagar_n == 7, "≤ 7 days"
 
 #Pt ASA preinjury
 ofi$ASApreinjury <- ifelse(ofi$pt_asa_preinjury == 1 | ofi$pt_asa_preinjury == 2, "ASA 1-2",
-                           ifelse(ofi$pt_asa_preinjury %in% 3:7, "ASA 3-7",
+                           ifelse(ofi$pt_asa_preinjury %in% 3:5, "ASA 3-5",
                                   ifelse(ofi$pt_asa_preinjury == 999, NA, NA)))
 
 #Survival after 30 days 

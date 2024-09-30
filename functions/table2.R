@@ -24,7 +24,7 @@ table3a <- tbl_uvregression(data = tablereg,
                               Intubation = "Mechanical ventilation",
                               ASApreinjury = "ASA preinjury",
                               OnDuty = "On call hours",
-                              TimeFCT = "Time to first CT"
+                              TimeFCT = "Time to first CT, in minutes"
                             )) %>%
   bold_labels() %>%
   bold_p(t = 0.05)
@@ -42,7 +42,7 @@ table3b <- tbl_regression(adjusted_table,
                                        Intubation = "Mechanical ventilation",
                                        OnDuty = "On call hours",
                                        ASApreinjury = "ASA preinjury",
-                                       TimeFCT = "Time to first CT")) %>%
+                                       TimeFCT = "Time to first CT, in minutes")) %>%
   bold_labels() %>%
   bold_p(t = 0.05)
 

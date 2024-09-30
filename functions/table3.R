@@ -38,7 +38,7 @@ table3aalive <- tbl_regression(adjusted_table1,
                                        OnDuty = "On call hours",
                                        Intubation = "Mechanical ventilation",
                                        ASApreinjury = "ASA preinjury",
-                                       TimeFCT = "Time to first CT")) %>%
+                                       TimeFCT = "Time to first CT, in minutes")) %>%
   bold_labels() %>%
   add_n() %>%
   bold_p(t = 0.05)
@@ -61,7 +61,7 @@ table3bdead <- tbl_regression(adjusted_table2,
                                             OnDuty = "On call hours",
                                             Intubation = "Mechanical ventilation",
                                             ASApreinjury = "ASA preinjury",
-                                            TimeFCT = "Time to first CT")) %>%
+                                            TimeFCT = "Time to first CT, in minutes")) %>%
   bold_labels() %>%
   bold_p(t = 0.05)
 
