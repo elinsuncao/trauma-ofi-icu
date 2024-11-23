@@ -5,7 +5,7 @@ tablereg <- ofi %>%
          ASApreinjury, Survival, OpportunityForImprovement1)
 
 tablereg$Intubation <- ifelse(is.na(tablereg$Intubation), "Unknown", table1$Intubation)
-tablereg$Intubation <- fct_relevel(tablereg$Intubation, "Not intubated", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown")
+tablereg$Intubation <- fct_relevel(tablereg$Intubation, "Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days", "Unknown")
 tablereg$daysinICU <- fct_relevel(tablereg$daysinICU, "≤ 7 days", "> 7 days")
 tablereg$Survival <- fct_relevel(tablereg$Survival, "Dead", "Alive")
 

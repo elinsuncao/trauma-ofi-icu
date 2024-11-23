@@ -33,7 +33,7 @@ subdat <- merged.data %>%
   select(ofi, pt_Gender, pt_age_yrs,  ed_gcs_sum, ed_sbp_value, ed_rr_value, 
          res_survival, pre_intubated, ed_intubated, dt_ed_first_ct, ISS, DateTime_ArrivalAtHospital, FirstTraumaDT_NotDone,
          host_care_level, hosp_vent_days, pt_asa_preinjury, pre_gcs_sum, 
-         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP)
+         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP, DeceasedDate)
 
 #Converting subdat$ofi to logical so subset can be used 
 subdat$ofi <- ifelse(subdat$ofi == "Yes", TRUE, FALSE)
@@ -70,10 +70,11 @@ ofi$Intubation1 <- ifelse(ofi$pre_intubated == 1, "Intubation",
 
 #Intubation combined with ventilator days 
 ofi$Intubation <- ifelse(ofi$Intubation1 == "Not intubated", "Not intubated",
-                         ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days ==  0, "Mechnical ventilation 1-7 days",
-                                ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 1:7, "Mechanical ventilation 1-7 days",
-                                       ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days", 
-                                              ifelse(ofi$Intubation1 == "Unknown", "Unknown", NA)))))
+                         ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 0:2, "Mechanical ventilation 0-2 days",
+                                ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 3:7, "Mechanical ventilation 3-7 days",
+                                       ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days",
+                                              ifelse(ofi$Intubation1 == "Unknown" | is.na(ofi$Intubation1), "Unknown", "Unknown")))))
+
 
 #Respiratory rate 
 ofi$RespiratoryRate <- ifelse(is.na(ofi$ed_rr_value), ofi$pre_rr_value, ofi$ed_rr_value)
@@ -162,6 +163,15 @@ ofi$Survival <- ifelse(ofi$res_survival == 1, "Dead",
                               ifelse(ofi$res_survival == 999, NA, NA)))
 
 
+#24-hour mortality
+#ofi$DateTime_ArrivalAtHospital <- as.Date(ofi$DateTime_ArrivalAtHospital)
+#ofi$DeceasedDate <- as.Date(ofi$DeceasedDate)
+# Calculate the difference in days
+#ofi$days_to_deceased <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
+# Count patients deceased within 1 day
+#ofi$Mortality <- ifelse(ofi$days_to_deceased <= 1, "Dead 24 hours", 
+#                        ifelse(ofi$days_to_deceased %in% 1:2, "Dead 48 hours", "Alive"))
+
 #OFI 
 ofi$OpportunityForImprovement <- ifelse(ofi$ofi == TRUE, "Opportunity for improvement",
                                         ifelse(ofi$ofi == FALSE, "No opportunity for improvement", NA))
@@ -170,7 +180,9 @@ ofi$OpportunityForImprovement1 <- ifelse(ofi$OpportunityForImprovement == "Oppor
                                          ifelse(ofi$OpportunityForImprovement == "No opportunity for improvement", 0, NA))
 
 
-
+#table1 <- ofi %>% 
+#  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
+#         ASApreinjury, Survival, Mortality, OpportunityForImprovement)
 
 table1 <- ofi %>% 
   select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
@@ -181,7 +193,7 @@ table1$Intubation <- ifelse(is.na(table1$Intubation), "Unknown", table1$Intubati
 table1 <- na.omit(table1)
 
 table2 <- table1 %>%
-  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 1-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
+  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
   tbl_summary(by = OpportunityForImprovement,
               type = list(OnDuty ~ "dichotomous"),
               label = list(RTS = "Revised Trauma Score",
@@ -191,9 +203,13 @@ table2 <- table1 %>%
                            daysinICU = "Days in the ICU",
                            OnDuty = "On call hours",
                            ASApreinjury = "ASA preinjury"),
+                       #    Mortality = "24-hour mortality"),
               statistic = list(
                 all_continuous() ~ "{mean} ({sd})",
-                all_categorical() ~ "{n} ({p}%)"
+                all_categorical() ~ "{n} ({p}%)", 
+               # daysinICU ~ "{mean} ({sd})"
+          #      Intubation ~ "{mean} ({sd})"
+          #Intubation och daysinICU måste göras till en numeric för att kunna visa medelvärde och standardavvikelse men blir då en ny rad i tabellen? 
               ),
               missing = "ifany",
               missing_text = "Missing",
@@ -208,6 +224,6 @@ table2 <- table1 %>%
   add_overall(last = TRUE) %>% 
   #add_p() %>%
   #bold_p(t=0.05) %>%
-  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 2. Sample Characteristics</div>") %>% 
+  modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 1. Sample Characteristics</div>") %>% 
  # as_flex_table() %>%
   print()
