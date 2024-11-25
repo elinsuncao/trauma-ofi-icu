@@ -164,13 +164,13 @@ ofi$Survival <- ifelse(ofi$res_survival == 1, "Dead",
 
 
 #24-hour mortality
-#ofi$DateTime_ArrivalAtHospital <- as.Date(ofi$DateTime_ArrivalAtHospital)
-#ofi$DeceasedDate <- as.Date(ofi$DeceasedDate)
+ofi$DateTime_ArrivalAtHospital <- as.Date(ofi$DateTime_ArrivalAtHospital)
+ofi$DeceasedDate <- as.Date(ofi$DeceasedDate)
 # Calculate the difference in days
-#ofi$days_to_deceased <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
+ofi$days_to_deceased <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
 # Count patients deceased within 1 day
-#ofi$Mortality <- ifelse(ofi$days_to_deceased <= 1, "Dead 24 hours", 
-#                        ifelse(ofi$days_to_deceased %in% 1:2, "Dead 48 hours", "Alive"))
+ofi$Mortality <- ifelse(ofi$days_to_deceased <= 1, "Dead",
+                        ifelse(ofi$days_to_deceased >1, "Alive", NA))
 
 #OFI 
 ofi$OpportunityForImprovement <- ifelse(ofi$ofi == TRUE, "Opportunity for improvement",
@@ -180,17 +180,19 @@ ofi$OpportunityForImprovement1 <- ifelse(ofi$OpportunityForImprovement == "Oppor
                                          ifelse(ofi$OpportunityForImprovement == "No opportunity for improvement", 0, NA))
 
 
-#table1 <- ofi %>% 
-#  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
-#         ASApreinjury, Survival, Mortality, OpportunityForImprovement)
-
 table1 <- ofi %>% 
   select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
-         ASApreinjury, Survival, OpportunityForImprovement)
+         ASApreinjury, Survival, Mortality, OpportunityForImprovement)
+
+#table1 <- ofi %>% 
+#  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
+#         ASApreinjury, Survival, OpportunityForImprovement)
 
 
 table1$Intubation <- ifelse(is.na(table1$Intubation), "Unknown", table1$Intubation)
-table1 <- na.omit(table1)
+#table1 <- na.omit(table1)
+table1 <- table1 %>%
+  filter(if_all(.cols = -Mortality, .fns = ~ !is.na(.)))
 
 table2 <- table1 %>%
   mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
@@ -202,11 +204,11 @@ table2 <- table1 %>%
                            TimeFCT = "Time to first CT, in minutes", 
                            daysinICU = "Days in the ICU",
                            OnDuty = "On call hours",
-                           ASApreinjury = "ASA preinjury"),
-                       #    Mortality = "24-hour mortality"),
+                           ASApreinjury = "ASA preinjury",
+                           Mortality = "24-hour mortality"),
               statistic = list(
                 all_continuous() ~ "{mean} ({sd})",
-                all_categorical() ~ "{n} ({p}%)", 
+                all_categorical() ~ "{n} ({p}%)"
                # daysinICU ~ "{mean} ({sd})"
           #      Intubation ~ "{mean} ({sd})"
           #Intubation och daysinICU måste göras till en numeric för att kunna visa medelvärde och standardavvikelse men blir då en ny rad i tabellen? 
