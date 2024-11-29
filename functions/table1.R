@@ -207,7 +207,8 @@ table2 <- table1 %>%
                            ASApreinjury = "ASA preinjury",
                            Mortality = "24-hour mortality"),
               statistic = list(
-                all_continuous() ~ "{mean} ({sd})",
+             #   all_continuous() ~ "{mean} ({sd})",
+                all_continuous() ~ c("{median} ({p25}, {p75})"),
                 all_categorical() ~ "{n} ({p}%)"
                # daysinICU ~ "{mean} ({sd})"
           #      Intubation ~ "{mean} ({sd})"
