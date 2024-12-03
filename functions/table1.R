@@ -33,7 +33,7 @@ subdat <- merged.data %>%
   select(ofi, pt_Gender, pt_age_yrs,  ed_gcs_sum, ed_sbp_value, ed_rr_value, 
          res_survival, pre_intubated, ed_intubated, dt_ed_first_ct, ISS, DateTime_ArrivalAtHospital, FirstTraumaDT_NotDone,
          host_care_level, hosp_vent_days, pt_asa_preinjury, pre_gcs_sum, 
-         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP, DeceasedDate)
+         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP, DeceasedDate, Deceased)
 
 #Converting subdat$ofi to logical so subset can be used 
 subdat$ofi <- ifelse(subdat$ofi == "Yes", TRUE, FALSE)
@@ -75,6 +75,9 @@ ofi$Intubation <- ifelse(ofi$Intubation1 == "Not intubated", "Not intubated",
                                        ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days",
                                               ifelse(ofi$Intubation1 == "Unknown" | is.na(ofi$Intubation1), "Unknown", "Unknown")))))
 
+
+#Kontinuerlig variabel mechanical ventilation
+ofi$mechanical.ventilation.cont <- ofi$hosp_vent_days
 
 #Respiratory rate 
 ofi$RespiratoryRate <- ifelse(is.na(ofi$ed_rr_value), ofi$pre_rr_value, ofi$ed_rr_value)
@@ -152,6 +155,9 @@ ofi$TimeFCT <- ofi$dt_ed_first_ct
 ofi$daysinICU <- ifelse(ofi$iva_dagar_n < 7 | ofi$iva_dagar_n == 7, "≤ 7 days",
                         ifelse(ofi$iva_dagar_n > 7, "> 7 days", NA))
 
+#Kontinuerlig variabel ICU LOS
+ofi$icu.los.cont <- ofi$iva_dagar_n
+
 #Pt ASA preinjury
 ofi$ASApreinjury <- ifelse(ofi$pt_asa_preinjury == 1 | ofi$pt_asa_preinjury == 2, "ASA 1-2",
                            ifelse(ofi$pt_asa_preinjury %in% 3:5, "ASA 3-5",
@@ -162,15 +168,31 @@ ofi$Survival <- ifelse(ofi$res_survival == 1, "Dead",
                        ifelse(ofi$res_survival == 2, "Alive",
                               ifelse(ofi$res_survival == 999, NA, NA)))
 
-
-#24-hour mortality
+#Jonatans version 
+ofi$Deceased <- as.logical(as.character(ofi$Deceased))
+ofi$DiedWithin24Hours <- ifelse(ofi$Deceased == FALSE, FALSE, NA)
 ofi$DateTime_ArrivalAtHospital <- as.Date(ofi$DateTime_ArrivalAtHospital)
 ofi$DeceasedDate <- as.Date(ofi$DeceasedDate)
-# Calculate the difference in days
-ofi$days_to_deceased <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
-# Count patients deceased within 1 day
-ofi$Mortality <- ifelse(ofi$days_to_deceased <= 1, "Dead",
-                        ifelse(ofi$days_to_deceased >1, "Alive", NA))
+time_diff <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
+ofi$DiedWithin24Hours <- ifelse(
+  ofi$Deceased == TRUE & time_diff <= 1, TRUE, 
+  ifelse(ofi$Deceased == TRUE & time_diff > 1, FALSE, 
+         ofi$DiedWithin24Hours))
+
+#24-h mortality
+# Konvertera datumen till Date-format
+#ofi$DateTime_ArrivalAtHospital <- as.Date(ofi$DateTime_ArrivalAtHospital)
+#ofi$DeceasedDate <- as.Date(ofi$DeceasedDate)
+
+# Beräkna skillnaden i dagar mellan ankomst och avliden datum
+#ofi$days_to_deceased <- as.numeric(ofi$DeceasedDate - ofi$DateTime_ArrivalAtHospital)
+
+# Klassificera patienter som "Dead" eller "Alive" baserat på villkoren
+#ofi$Mortality <- ifelse(!is.na(ofi$days_to_deceased) & ofi$days_to_deceased <= 1, "Dead",
+ #                       ifelse(!is.na(ofi$days_to_deceased) & ofi$days_to_deceased > 1, "Alive",
+#                               ifelse(is.na(ofi$DeceasedDate) & ofi$Deceased == FALSE, "Alive", NA)))
+
+                        
 
 #OFI 
 ofi$OpportunityForImprovement <- ifelse(ofi$ofi == TRUE, "Opportunity for improvement",
@@ -181,8 +203,8 @@ ofi$OpportunityForImprovement1 <- ifelse(ofi$OpportunityForImprovement == "Oppor
 
 
 table1 <- ofi %>% 
-  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
-         ASApreinjury, Survival, Mortality, OpportunityForImprovement)
+  select(Sex, Age, Intubation, mechanical.ventilation.cont, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
+         icu.los.cont, ASApreinjury, Survival, DiedWithin24Hours, OpportunityForImprovement)
 
 #table1 <- ofi %>% 
 #  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
@@ -191,21 +213,27 @@ table1 <- ofi %>%
 
 table1$Intubation <- ifelse(is.na(table1$Intubation), "Unknown", table1$Intubation)
 #table1 <- na.omit(table1)
+#table1 <- table1 %>%
+#  filter(if_all(.cols = -Mortality, .fns = ~ !is.na(.)))
+
 table1 <- table1 %>%
-  filter(if_all(.cols = -Mortality, .fns = ~ !is.na(.)))
+  filter(if_all(.cols = -c(DiedWithin24Hours, mechanical.ventilation.cont, icu.los.cont), .fns = ~ !is.na(.)))
+
 
 table2 <- table1 %>%
-  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days", "Unknown"))) %>%
+  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days"))) %>%
   tbl_summary(by = OpportunityForImprovement,
               type = list(OnDuty ~ "dichotomous"),
               label = list(RTS = "Revised Trauma Score",
                            ISS = "Injury Severity Score",
                            Intubation = "Mechanical ventilation",
+                           mechanical.ventilation.cont = "Mechanical ventilation in days",
                            TimeFCT = "Time to first CT, in minutes", 
-                           daysinICU = "Days in the ICU",
+                           daysinICU = "ICU length of stay",
+                           icu.los.cont = "ICU length of stay in days",
                            OnDuty = "On call hours",
                            ASApreinjury = "ASA preinjury",
-                           Mortality = "24-hour mortality"),
+                           DiedWithin24Hours = "24-hour mortality"),
               statistic = list(
              #   all_continuous() ~ "{mean} ({sd})",
                 all_continuous() ~ c("{median} ({p25}, {p75})"),
@@ -225,6 +253,7 @@ table2 <- table1 %>%
   ) %>%
   bold_labels() %>% 
   add_overall(last = TRUE) %>% 
+  add_stat_label() %>%
   #add_p() %>%
   #bold_p(t=0.05) %>%
   modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 1. Sample Characteristics</div>") %>% 
