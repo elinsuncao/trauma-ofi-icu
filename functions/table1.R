@@ -61,23 +61,28 @@ ofi$Sex <- ifelse(ofi$pt_Gender == 1, "Male",
 ofi$Age <- ofi$pt_age_yrs
 
 #Intubation 
-ofi$Intubation1 <- ifelse(ofi$pre_intubated == 1, "Intubation",
-                          ifelse(ofi$pre_intubated == 2, "Not intubated",  
-                                 ifelse(ofi$pre_intubated == 999, "Unknown",
-                                        ifelse(ofi$ed_intubated == 1, "Intubation",
-                                               ifelse(ofi$ed_intubated == 2, "Not intubated",  
-                                                      ifelse(ofi$ed_intubated == 999, "Unknown", "Unknown"))))))
+#ofi$Intubation1 <- ifelse(ofi$pre_intubated == 1, "Intubation",
+#                          ifelse(ofi$pre_intubated == 2, "Not intubated",  
+#                                 ifelse(ofi$pre_intubated == 999, "Unknown",
+#                                        ifelse(ofi$ed_intubated == 1, "Intubation",
+#                                               ifelse(ofi$ed_intubated == 2, "Not intubated",  
+#                                                      ifelse(ofi$ed_intubated == 999, "Unknown", "Unknown"))))))
 
 #Intubation combined with ventilator days 
-ofi$Intubation <- ifelse(ofi$Intubation1 == "Not intubated", "Not intubated",
-                         ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 0:2, "Mechanical ventilation 0-2 days",
-                                ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 3:7, "Mechanical ventilation 3-7 days",
-                                       ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days",
-                                              ifelse(ofi$Intubation1 == "Unknown" | is.na(ofi$Intubation1), "Unknown", "Unknown")))))
+#ofi$Intubation <- ifelse(ofi$Intubation1 == "Not intubated", "Not intubated",
+#                         ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 0:2, "Mechanical ventilation 0-2 days",
+##                                ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days %in% 3:7, "Mechanical ventilation 3-7 days",
+#                                       ifelse(ofi$Intubation1 == "Intubation" & ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days",
+#                                              ifelse(ofi$Intubation1 == "Unknown", "Unknown", "Unknown")))))
+
+ofi$Intubation <-  ifelse(ofi$hosp_vent_days %in% 0:2, "Mechanical ventilation 0-2 days",
+                        ifelse(ofi$hosp_vent_days %in% 3:7, "Mechanical ventilation 3-7 days",
+                             ifelse(ofi$hosp_vent_days > 7, "Mechanical ventilation > 7 days", "Unknown")))
 
 
 #Kontinuerlig variabel mechanical ventilation
-ofi$mechanical.ventilation.cont <- ofi$hosp_vent_days
+ofi$mechanical.ventilation.cont <- ifelse(ofi$hosp_vent_days > 0, ofi$hosp_vent_days, "Unknown")
+
 
 #Respiratory rate 
 ofi$RespiratoryRate <- ifelse(is.na(ofi$ed_rr_value), ofi$pre_rr_value, ofi$ed_rr_value)
@@ -206,22 +211,13 @@ table1 <- ofi %>%
   select(Sex, Age, Intubation, mechanical.ventilation.cont, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
          icu.los.cont, ASApreinjury, Survival, DiedWithin24Hours, OpportunityForImprovement)
 
-#table1 <- ofi %>% 
-#  select(Sex, Age, Intubation, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
-#         ASApreinjury, Survival, OpportunityForImprovement)
-
-
-table1$Intubation <- ifelse(is.na(table1$Intubation), "Unknown", table1$Intubation)
-#table1 <- na.omit(table1)
-#table1 <- table1 %>%
-#  filter(if_all(.cols = -Mortality, .fns = ~ !is.na(.)))
 
 table1 <- table1 %>%
   filter(if_all(.cols = -c(DiedWithin24Hours, mechanical.ventilation.cont, icu.los.cont), .fns = ~ !is.na(.)))
 
 
 table2 <- table1 %>%
-  mutate(Intubation = factor(Intubation, levels = c("Not intubated", "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days"))) %>%
+  mutate(Intubation = factor(Intubation, levels = c("Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days"))) %>%
   tbl_summary(by = OpportunityForImprovement,
               type = list(OnDuty ~ "dichotomous"),
               label = list(RTS = "Revised Trauma Score",
@@ -244,6 +240,7 @@ table2 <- table1 %>%
               ),
               missing = "ifany",
               missing_text = "Missing",
+              missing_stat = "{N_miss} ({p_miss}%)",
               digits = all_continuous() ~ 0
   )  %>%
   modify_table_styling(
