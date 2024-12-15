@@ -4,7 +4,7 @@ tablereg <- ofi %>%
   select(Sex, Age, Intubation, RTS, ISS,TimeFCT, OnDuty, daysinICU, TimeFCT, 
          ASApreinjury, Survival, OpportunityForImprovement1)
 
-tablereg$Intubation <- ifelse(is.na(tablereg$Intubation), "Unknown", table1$Intubation)
+tablereg$Intubation <- ifelse(is.na(tablereg$Intubation), "Missing", tablereg$Intubation)
 tablereg$Intubation <- fct_relevel(tablereg$Intubation, "Mechanical ventilation 0-2 days", "Mechanical ventilation 3-7 days", "Mechanical ventilation > 7 days", "Unknown")
 tablereg$daysinICU <- fct_relevel(tablereg$daysinICU, "≤ 7 days", "> 7 days")
 tablereg$Survival <- fct_relevel(tablereg$Survival, "Dead", "Alive")
@@ -19,7 +19,9 @@ table3a <- tbl_uvregression(data = tablereg,
                             exponentiate = TRUE, 
                             label = list(
                               RTS = "Revised Trauma Score",
-                              daysinICU = "Days in the ICU",
+                              daysinICU = "ICU length of stay",
+                              #icu.los.cont = "ICU length of stay in days",
+                             # mechanical.ventilation.cont = "Mechanical ventilation in days",
                               TimeFInt = "Time to first intervention",
                               Intubation = "Mechanical ventilation",
                               ASApreinjury = "ASA preinjury",
@@ -40,6 +42,9 @@ table3b <- tbl_regression(adjusted_table,
                           label = list(RTS = "Revised Trauma Score",
                                        daysinICU = "Days in the ICU",
                                        Intubation = "Mechanical ventilation",
+                                 #      icu.los.cont = "ICU length of stay in days",
+                                     #  mechanical.ventilation.cont = "Mechanical ventilation in days",
+                                       TimeFInt = "Time to first intervention",
                                        OnDuty = "On call hours",
                                        ASApreinjury = "ASA preinjury",
                                        TimeFCT = "Time to first CT, in minutes")) %>%

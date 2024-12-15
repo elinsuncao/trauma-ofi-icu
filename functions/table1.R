@@ -213,7 +213,7 @@ table1 <- ofi %>%
 
 
 table1 <- table1 %>%
-  filter(if_all(.cols = -c(DiedWithin24Hours, mechanical.ventilation.cont, icu.los.cont), .fns = ~ !is.na(.)))
+  filter(if_all(.cols = -c(DiedWithin24Hours, Intubation, mechanical.ventilation.cont, icu.los.cont), .fns = ~ !is.na(.)))
 
 
 table2 <- table1 %>%
