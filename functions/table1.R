@@ -154,7 +154,7 @@ ofi$OnDuty <- ifelse(ofi$Weekend == "Yes", 1,
                      ifelse(ofi$WorkingHours == "No", 1, 0))
 
 #Time to first CT
-ofi$TimeFCT <- ofi$dt_ed_first_ct
+ofi$TimeFCT <- ofi$dt_ed_first_ct/10
 
 #Days in the ICU 
 ofi$daysinICU <- ifelse(ofi$iva_dagar_n < 7 | ofi$iva_dagar_n == 7, "≤ 7 days",
@@ -251,7 +251,7 @@ table2 <- table1 %>%
   bold_labels() %>% 
   add_overall(last = TRUE) %>% 
   add_stat_label() %>%
-  #add_p() %>%
+ # add_p() %>%
   #bold_p(t=0.05) %>%
   modify_caption("<div style='text-align: left; font-weight: bold; color: black'>Table 1. Sample Characteristics</div>") %>% 
  # as_flex_table() %>%
