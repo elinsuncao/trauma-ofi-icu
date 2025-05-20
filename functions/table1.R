@@ -33,7 +33,8 @@ subdat <- merged.data %>%
   select(ofi, pt_Gender, pt_age_yrs,  ed_gcs_sum, ed_sbp_value, ed_rr_value, 
          res_survival, pre_intubated, ed_intubated, dt_ed_first_ct, ISS, DateTime_ArrivalAtHospital, FirstTraumaDT_NotDone,
          host_care_level, hosp_vent_days, pt_asa_preinjury, pre_gcs_sum, 
-         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP, DeceasedDate, Deceased)
+         pre_rr_value, pre_sbp_value, Fr1.12, ed_rr_rtscat, ed_sbp_rtscat, pre_rr_rtscat, pre_sbp_rtscat, iva_dagar_n, Problemomrade_.FMP, DeceasedDate, 
+         Deceased, VK_mass_transf, VK_hlr_thorak, inj_mechanism, inj_dominant, Fr1.12, ed_emerg_proc)
 
 #Converting subdat$ofi to logical so subset can be used 
 subdat$ofi <- ifelse(subdat$ofi == "Yes", TRUE, FALSE)
@@ -197,6 +198,51 @@ ofi$DiedWithin24Hours <- ifelse(
  #                       ifelse(!is.na(ofi$days_to_deceased) & ofi$days_to_deceased > 1, "Alive",
 #                               ifelse(is.na(ofi$DeceasedDate) & ofi$Deceased == FALSE, "Alive", NA)))
 
+
+#type of trauma
+ofi$trauma <- ifelse(ofi$inj_dominant == 1, "Blunt",
+                     ifelse(ofi$inj_dominant == 2, "Penetrating",
+                            ifelse(ofi$inj_dominant == 999, "Unknown", "Unknown")))
+
+#mechanism of injury
+ofi$moi <- ifelse(ofi$inj_mechanism %in% 1:5, "Traffic",
+                  ifelse(ofi$inj_mechanism == 6, "Shot",
+                         ifelse(ofi$inj_mechanism == 7, "Stabbed",
+                                ifelse(ofi$inj_mechanism == 8, "Hit with blund object",
+                                       ifelse(ofi$inj_mechanism %in% 9:10, "Fall",
+                                              ifelse(ofi$inj_mechanism == 11, "Explosion",
+                                                     ifelse(ofi$inj_mechanism == 12, "Other",
+                                                            ifelse(ofi$inj_mechanism == 999, "Unknown", "Unknown"))))))))
+
+#need for transfusion 
+ofi$transfusion <- ifelse(ofi$VK_mass_transf == "Ja", "Yes",
+                          ifelse(ofi$VK_mass_transf == "Nej", "No", "Unknown"))
+
+#shock on admission 
+ofi$shock <- ifelse(ofi$ed_sbp_value < 90, "Yes",
+                    ifelse(ofi$ed_sbp_value > 90 | ofi$ed_sbp_value == 90, "No", "Unknown"))
+
+#GCS on admission 
+ofi$gcsoa <- ifelse(ofi$ed_gcs_sum %in% 13:15, "13-15",
+                    ifelse(ofi$ed_gcs_sum %in% 9:12, "9-12",
+                           ifelse(ofi$ed_gcs_sum %in% 6:8, "6-8",
+                                  ifelse(ofi$ed_gcs_sum %in% 4:5, "4-5",
+                                         ifelse(ofi$ed_gcs_sum == 3, "3", "Unknown")))))
+
+#pre-hospital cardiac arrest
+ofi$ca <- ifelse(ofi$Fr1.12 == 1 | ofi$VK_hlr_thorak == "Ja", "Yes", "No/Unknown")
+
+#emergency procedures/surgery
+ofi$emerg_proc <- ifelse(ofi$ed_emerg_proc == 1, "Thoracotomy",
+                         ifelse(ofi$ed_emerg_proc == 2, "Laparotomy",
+                                ifelse(ofi$ed_emerg_proc == 3, "Extraperitoneal pelvic packing",
+                                       ifelse(ofi$ed_emerg_proc == 4, "Limb revascularisation",
+                                              ifelse(ofi$ed_emerg_proc == 5, "Interventional radiology",
+                                                     ifelse(ofi$ed_emerg_proc == 6, "Craniotomy",
+                                                            ifelse(ofi$ed_emerg_proc == 7, "Intracranial pressure device insertion",
+                                                                   ifelse(ofi$ed_emerg_proc == 8, "Other",
+                                                                          ifelse(ofi$ed_emerg_proc == 99, "No interventions performed",
+                                                                                 ifelse(ofi$ed_emerg_proc == 999, "Unknown", "Unknown"))))))))))
                         
 
 #OFI 
@@ -209,11 +255,11 @@ ofi$OpportunityForImprovement1 <- ifelse(ofi$OpportunityForImprovement == "Oppor
 
 table1 <- ofi %>% 
   select(Sex, Age, Intubation, mechanical.ventilation.cont, RTS, ISS, TimeFCT, OnDuty, daysinICU, 
-         icu.los.cont, ASApreinjury, Survival, DiedWithin24Hours, OpportunityForImprovement)
+         icu.los.cont, ASApreinjury, Survival, DiedWithin24Hours, trauma, moi, transfusion, shock,gcsoa, ca, emerg_proc, OpportunityForImprovement)
 
 
 table1 <- table1 %>%
-  filter(if_all(.cols = -c(DiedWithin24Hours, Intubation, mechanical.ventilation.cont, icu.los.cont), .fns = ~ !is.na(.)))
+  filter(if_all(.cols = -c(DiedWithin24Hours, Intubation, mechanical.ventilation.cont, icu.los.cont, trauma, moi, transfusion, shock,gcsoa, ca, emerg_proc), .fns = ~ !is.na(.)))
 
 
 table2 <- table1 %>%
@@ -229,7 +275,14 @@ table2 <- table1 %>%
                            icu.los.cont = "ICU length of stay in days",
                            OnDuty = "On call hours",
                            ASApreinjury = "ASA preinjury",
-                           DiedWithin24Hours = "24-hour mortality"),
+                           DiedWithin24Hours = "24-hour mortality",
+                           trauma = "Type of trauma",
+                           moi = "Mechanism of injury",
+                           transfusion = "Need for transfusion",
+                           shock = "Shock on admission",
+                           gcsoa = "GCS on admission",
+                           ca = "Prehospital cardiac arrest",
+                           emerg_proc = "Emergency procedures"),
               statistic = list(
              #   all_continuous() ~ "{mean} ({sd})",
                 all_continuous() ~ c("{median} ({p25}, {p75})"),
